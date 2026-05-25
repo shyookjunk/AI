@@ -147,7 +147,7 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small\color{mygray} 문서 제목}
+\fancyhead[L]{\small\color{mygray} Restricted Boltzmann Machine}
 \fancyhead[R]{\small\color{mygray} \rightmark}
 \fancyfoot[C]{\small -- \thepage\ --}
 \renewcommand{\headrulewidth}{0.4pt}
@@ -389,21 +389,124 @@ Then likelihood function of the training dataset, $p(V)$, is defined as:
   \label{eq:likelihood}
   p(V) \equiv \prod_{m=1}^{M} p(\mathbf{v}_m).
 \end{equation}
-The log-likelihood function is given by:
+The \textcolor{red}{log-likelihood function} is given by:
 \begin{checkpointbox}[Log-likelihood function]
 \begin{equation}
   \label{eq:log_likelihood}
-  \mathcal{L} \equiv \log p(V) = \sum_{m=1}^{M} \log p(\mathbf{v}_m).
+  \mathcal{L} \equiv \log p(V) = \sum_{m=1}^{M} \log p(\mathbf{v}_m)
+  \equiv \sum_{m=1}^{M} \mathcal{L}_{\mathbf{v}_m}.
 \end{equation}
+where $\mathcal{L}_{\mathbf{v}_m} = \log p(\mathbf{v}_m)$ is the log-likelihood of a single 
+training sample $\mathbf{v}_m$.
 \end{checkpointbox}
 
+\begin{itemize}
+  \item The learning process in RBM involves maximizing the log-likelihood 
+    function $\mathcal{L}$ with respect to the model parameters $\theta = \{w_{ij}, a_i, b_j\}$.
+  \item This is typically done using gradient ascent, where we compute 
+    the gradients of $\mathcal{L}$ with respect to the parameters and update them iteratively.
+  \item The gradients can be computed using the following formulas:
+  \end{itemize}
+
+
+\begin{cautionbox}[Gradient Ascend Update]
+  \begin{align}
+    w_{ij}^{(t+1)} &= w_{ij}^{(t)} + \eta \frac{\partial \mathcal{L}}{\partial w_{ij}} \label{eq:update_w} \\
+    a_i^{(t+1)} &= a_i^{(t)} + \eta \frac{\partial \mathcal{L}}{\partial a_i} \label{eq:update_a} \\
+    b_j^{(t+1)} &= b_j^{(t)} + \eta \frac{\partial \mathcal{L}}{\partial b_j} \label{eq:update_b}
+  \end{align}
+\end{cautionbox}
+
+When we use a single training sample $\mathbf{v}$, the gradients can be computed as follows:
+\begin{align}
+  \frac{\partial \mathcal{L}}{\partial w_{ij}} &= \dfrac{\partial \mathcal{L}_{\mathbf{v}}}{\partial w_{ij}} \nonumber \\
+  &= \dfrac{\partial}{\partial w_{ij}} \ln p(\mathbf{v}) \nonumber \\
+  &= \dfrac{\partial}{\partial w_{ij}} \ln \left[\dfrac{\sum_{\mathbf{h}} 
+        e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{Z}\right] \nonumber \\
+  &= \dfrac{\partial}{\partial w_{ij}} \ln \sum_{\mathbf{h}} 
+        e^{-\epsilon(\mathbf{v}, \mathbf{h})} 
+        - \dfrac{\partial  \ln Z}{\partial w_{ij}} \nonumber \\
+  &= \dfrac{1}{\sum_{\mathbf{h^\prime}} e^{-\epsilon(\mathbf{v}, \mathbf{h^\prime})}}
+        \sum_{\mathbf{h}} \dfrac{\partial e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{\partial w_{ij}} 
+        - \dfrac{1}{Z} \dfrac{\partial Z}{\partial w_{ij}} \nonumber \\
+  &= \dfrac{1}{\sum_{\mathbf{h^\prime}} e^{-\epsilon(\mathbf{v}, \mathbf{h^\prime})}}
+        \sum_{\mathbf{h}} \dfrac{\partial e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{\partial w_{ij}}
+        +\dfrac{1}{Z} \sum_{\mathbf{v}, \mathbf{h}} e^{-\epsilon(\mathbf{v},\mathbf{h})}
+        \dfrac{\partial \epsilon(\mathbf{v}, \mathbf{h})}{\partial w_{ij}} \nonumber \\
+  &=-\dfrac{1}{\sum_{\mathbf{h^\prime}} e^{-\epsilon(\mathbf{v}, \mathbf{h^\prime})}}
+        \sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})} 
+        \dfrac{\partial \epsilon(\mathbf{v}, \mathbf{h})}{\partial w_{ij}}
+        + \sum_{\mathbf{v}, \mathbf{h}} \textcolor{magenta}{\dfrac{e^{-\epsilon(\mathbf{v},\mathbf{h})}}{Z}} 
+        \dfrac{\partial \epsilon(\mathbf{v}, \mathbf{h})}{\partial w_{ij}} \nonumber \\
+  &=-\sum_{\mathbf{h}} \textcolor{red}{\dfrac{e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{\sum_{\mathbf{h^\prime}} e^{-\epsilon(\mathbf{v}, \mathbf{h^\prime})}}}  
+        \dfrac{\partial \epsilon(\mathbf{v}, \mathbf{h})}{\partial w_{ij}}
+        + \sum_{\mathbf{v}, \mathbf{h}} \textcolor{magenta}{p(\mathbf{v},\mathbf{h}) }
+        \dfrac{\partial \epsilon(\mathbf{v}, \mathbf{h})}{\partial w_{ij}} \nonumber \\
+  &=-\sum_{\mathbf{h}} \textcolor{red}{p(\mathbf{h}|\mathbf{v})}
+        \dfrac{\partial \epsilon(\mathbf{v}, \mathbf{h})}{\partial w_{ij}}
+        + \sum_{\mathbf{v}, \mathbf{h}} p(\mathbf{v},\mathbf{h}) 
+        \dfrac{\partial \epsilon(\mathbf{v}, \mathbf{h})}{\partial w_{ij}} \nonumber \\
+  &=-\sum_{\mathbf{h}} p(\mathbf{h}|\mathbf{v}) (-v_i h_j)
+        + \sum_{\mathbf{v}, \mathbf{h}} p(\mathbf{v},\mathbf{h}) (-v_i h_j) \nonumber \\
+  &=\sum_{\mathbf{h}} p(\mathbf{h}|\mathbf{v}) v_i h_j
+        - \sum_{\mathbf{v}, \mathbf{h}} p(\mathbf{v},\mathbf{h}) v_i h_j \label{eq:gradient_w}
+\end{align}
+Here, we use the definition of the energy function $\epsilon(\mathbf{v}, \mathbf{h})$ in Eq. \eqref{eq:energy},
+and Eqs. \eqref{eq:joint_prob} and \eqref{eq:hidden_cond_prob} in the derivation.
+Since $h_i$ can take a value $0$ or $1$, the first term in the last line of Eq. \eqref{eq:gradient_w}
+is rewritten as:
+\begin{align}
+  \sum_{\mathbf{h}} p(\mathbf{h}|\mathbf{v}) v_i h_j & 
+    = \dfrac{\sum_{\mathbf{h}} \exp\left(\sum_{i,j}w_{ij}v_i h_j+\sum_j b_j h_j\right) v_i h_j}
+          {\sum_{\mathbf{h}} \exp\left(\sum_{i,j}w_{ij}v_i h_j+\sum_j b_j h_j\right)} \nonumber \\
+    &= \dfrac{\left\{\exp\left(\sum_i w_{ij} v_i+b_i\right) v_i +0\right\} 
+      \sum_{\mathbf{h}^\prime} \exp\left(\sum_{i,j}w_{ij}v_i h^\prime_j+\sum_j b_j h^\prime_j\right) v_i h^\prime_j}
+          {\left\{\exp\left(\sum_i w_{ij} v_i+b_i\right) + 1\right\} 
+                  \sum_{\mathbf{h}^\prime} \exp\left(\sum_{i,j}w_{ij}v_i h^\prime_j+\sum_j b_j h^\prime_j\right) 
+                          v_i h^\prime_j} \nonumber \\  
+    &= \dfrac{1}{1 + \exp\left(-\sum_i w_{ij} v_i - b_j\right)} v_i \nonumber \\
+    &= p(h_j=1|\mathbf{v}) v_i. \label{eq:gradient_w_first_term}
+\end{align}
+Therefore, the gradient of the log-likelihood with respect to $w_{ij}$ is given by:
+\begin{align}
+   \frac{\partial \mathcal{L}}{\partial w_{ij}} &= \dfrac{\partial \mathcal{L}_{\mathbf{v}}}{\partial w_{ij}} \nonumber \\
+    &= \sum_{\mathbf{h}} p(\mathbf{h}|\mathbf{v}) v_i h_j
+        - \sum_{\mathbf{v}, \mathbf{h}} p(\mathbf{v},\mathbf{h}) v_i h_j \nonumber \\
+    &= p(h_j=1|\mathbf{v}) v_i - \sum_{\mathbf{v}, \mathbf{h}} p(\mathbf{v},\mathbf{h}) v_i h_j \nonumber \\
+    &= \left<v_i h_j\right>_{\text{data}} - \left<v_i h_j\right>_{\text{model}}. \label{eq:gradient_w_final}
+\end{align}
+
+
+
+%===============================================================
+\end{document}
+%===============================================================
+
+%----------- 예제 박스 예시 -----------------------------------
+\begin{samplebox}[예제 1-1: 포물선 운동]
+  \textsf{문제.} 초속 $v_0 = 20\,\mathrm{m/s}$, 발사각 $\theta = 30°$로 발사된
+  물체의 최대 높이를 구하시오.
+
+  \medskip
+  \textbf{풀이.}
+  수직 성분의 초속도는 $v_{0y} = v_0 \sin\theta$이므로,
+  \[
+    H = \frac{v_{0y}^2}{2g}
+      = \frac{(20 \times 0.5)^2}{2 \times 9.8}
+      \approx 5.1\,\mathrm{m}.
+  \]
+\end{samplebox}
+
+%----------- 확인 문제 박스 예시 ------------------------------
+\begin{checkpointbox}[확인 문제 1-1]
+  위 예제에서 수평 도달 거리를 구하시오.
+\end{checkpointbox}
 
 %----------- 주의 박스 예시 -----------------------------------
 \begin{cautionbox}[주의]
   부호 규약을 일관되게 사용해야 합니다.
   위 방향을 양(+)으로 정했다면 중력가속도는 $g = -9.8\,\mathrm{m/s^2}$입니다.
 \end{cautionbox}
-
 
 
 %---------------------------------------------------------------
@@ -450,26 +553,3 @@ The log-likelihood function is given by:
     \bottomrule
   \end{tabular}
 \end{table}
-
-%===============================================================
-\end{document}
-%===============================================================
-
-\begin{samplebox}[예제 1-1: 포물선 운동]
-  \textsf{문제.} 초속 $v_0 = 20\,\mathrm{m/s}$, 발사각 $\theta = 30°$로 발사된
-  물체의 최대 높이를 구하시오.
-
-  \medskip
-  \textbf{풀이.}
-  수직 성분의 초속도는 $v_{0y} = v_0 \sin\theta$이므로,
-  \[
-    H = \frac{v_{0y}^2}{2g}
-      = \frac{(20 \times 0.5)^2}{2 \times 9.8}
-      \approx 5.1\,\mathrm{m}.
-  \]
-\end{samplebox}
-
-%----------- 확인 문제 박스 예시 ------------------------------
-\begin{checkpointbox}[확인 문제 1-1]
-  위 예제에서 수평 도달 거리를 구하시오.
-\end{checkpointbox}
