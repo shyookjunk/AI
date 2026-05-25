@@ -332,7 +332,11 @@ Note that the first equality in Eq. \eqref{eq:hidden_cond_prob} can be rewritten
    &= \dfrac{\dfrac{e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{Z}}{\dfrac{1}{Z} \sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}} \nonumber \\
    &= \dfrac{e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{\sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}} \nonumber \\
    &= \dfrac{\exp\left(\sum_i\sum_j w_{ij} v_i h_j+\sum_i a_i v_i + \sum_j b_j h_j\right)}
-   {\sum_{\mathbf{h}} \exp\left(\sum_i\sum_j w_{ij} v_i h_j+\sum_i a_i v_i + \sum_j b_j h_j\right)}. 
+   {\sum_{\mathbf{h}} \exp\left(\sum_i\sum_j w_{ij} v_i h_j+\sum_i a_i v_i + \sum_j b_j h_j\right)} \nonumber \\
+   &= \dfrac{\exp\left(\sum_i a_i v_i\right)\exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_j b_j h_j\right)}
+   {\exp\left(\sum_i a_i v_i\right)\sum_{\mathbf{h}} \exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_j b_j h_j\right)} \nonumber \\
+   &= \dfrac{\exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_j b_j h_j\right)}
+   {\sum_{\mathbf{h}} \exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_j b_j h_j\right)}. 
    \label{eq:hidden_cond_prob_rewrite}
 \end{align}
 Similarly, the first equality in Eq. \eqref{eq:visible_cond_prob} can be rewritten as:
@@ -341,14 +345,58 @@ Similarly, the first equality in Eq. \eqref{eq:visible_cond_prob} can be rewritt
   &= \dfrac{\dfrac{e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{Z}}{\dfrac{1}{Z} \sum_{\mathbf{v}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}} \nonumber \\
   &= \dfrac{e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{\sum_{\mathbf{v}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}} \nonumber \\
   &= \dfrac{\exp\left(\sum_i\sum_j w_{ij} v_i h_j+\sum_i a_i v_i + \sum_j b_j h_j\right)}
-  {\sum_{\mathbf{v}} \exp\left(\sum_i\sum_j w_{ij} v_i h_j+\sum_i a_i v_i + \sum_j b_j h_j\right)}. 
+  {\sum_{\mathbf{v}} \exp\left(\sum_i\sum_j w_{ij} v_i h_j+\sum_i a_i v_i + \sum_j b_j h_j\right)} \nonumber \\
+  &= \dfrac{\exp\left(\sum_j b_j h_j\right)\exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_i a_i v_i\right)}
+  {\exp\left(\sum_j b_j h_j\right)\sum_{\mathbf{v}} \exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_i a_i v_i\right)} \nonumber \\
+  &= \dfrac{\exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_j b_j h_j\right)}
+  {\sum_{\mathbf{v}} \exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_j b_j h_j\right)}. 
   \label{eq:visible_cond_prob_rewrite}
 \end{align}
 
-%----------- 확인 문제 박스 예시 ------------------------------
-\begin{checkpointbox}[확인 문제 1-1]
-  위 예제에서 수평 도달 거리를 구하시오.
+Eqs. \eqref{eq:hidden_cond_prob_rewrite} and \eqref{eq:visible_cond_prob_rewrite} give us 
+the conditional probability that $h_j=1$ given $\mathbf{v}$
+and the conditional probability that $v_i=1$ given $\mathbf{h}$, respectively:
+\begin{align}
+  p(h_j=1|\mathbf{v}) &= \dfrac{\exp\left(\sum_i w_{ij} v_i + b_j\right) 
+  \sum_{\mathbf{h^\prime}} \exp\left(\sum_i\sum_{k\neq j} w_{ik} v_i h_k + \sum_{k\neq j} b_k h_k\right)}
+  {\sum_{\mathbf{h}} \exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_j b_j h_j\right)} \nonumber \\
+  &= \dfrac{\exp\left(\sum_i w_{ij} v_i + b_j\right) \sum_{\mathbf{h'}} \exp\left(\sum_i\sum_{k\neq j} w_{ik} v_i h_k + \sum_{k\neq j} b_k h_k\right)}
+   {\left[\exp\left(\sum_i w_{ij} v_i + b_j\right)+1\right] \sum_{\mathbf{h'}} \exp\left(\sum_i\sum_{k\neq j} w_{ik} v_i h_k + \sum_{k\neq j} b_k h_k\right)} \nonumber \\
+   &= \dfrac{\exp\left(\sum_i w_{ij} v_i + b_j\right)}{\exp\left(\sum_i w_{ij} v_i + b_j\right) + 1} \nonumber \\
+   &= \frac{1}{1 + \exp\left(-\sum_i w_{ij} v_i - b_j\right)} = \sigma\left(\sum_i w_{ij} v_i + b_j\right)
+   \label{eq:hidden_cond_prob_final}
+\end{align}
+Here, $\sigma(x) = \frac{1}{1 + e^{-x}}$ is the sigmoid function and $\mathbf{h^\prime}$ denotes the configuration of hidden units except $h_j$.
+Similarly, we can derive the conditional probability that $v_i=1$ given $\mathbf{h}$:
+\begin{align}
+  p(v_i=1|\mathbf{h}) &= \dfrac{\exp\left(\sum_j w_{ij} h_j + a_i\right) 
+  \sum_{\mathbf{v^\prime}} \exp\left(\sum_{k\neq i}\sum_j w_{kj} v_k h_j + \sum_{k\neq i} a_k v_k\right)}
+  {\sum_{\mathbf{v}} \exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_i a_i v_i\right)} \nonumber \\
+  &= \dfrac{\exp\left(\sum_j w_{ij} h_j + a_i\right) \sum_{\mathbf{v'}} \exp\left(\sum_{k\neq i}\sum_j w_{kj} v_k h_j + \sum_{k\neq i} a_k v_k\right)}
+   {\left[\exp\left(\sum_j w_{ij} h_j + a_i\right)+1\right] \sum_{\mathbf{v'}} \exp\left(\sum_{k\neq i}\sum_j w_{kj} v_k h_j + \sum_{k\neq i} a_k v_k\right)} \nonumber \\
+   &= \dfrac{\exp\left(\sum_j w_{ij} h_j + a_i\right)}{\exp\left(\sum_j w_{ij} h_j + a_i\right) + 1} \nonumber \\
+   &= \frac{1}{1 + \exp\left(-\sum_j w_{ij} h_j - a_i\right)} = \sigma\left(\sum_j w_{ij} h_j + a_i\right).
+   \label{eq:visible_cond_prob_final}
+\end{align}
+Here, $\mathbf{v^\prime}$ denotes the configuration of visible units except $v_i$.
+
+\subsection{Learning in RBM}
+
+Let training dataset $V$ be composed of $M$ samples,
+i.e., $V = \{\mathbf{v}_{1}, \mathbf{v}_{2}, \ldots, \mathbf{v}_{M}\}$. 
+Then likelihood function of the training dataset, $p(V)$, is defined as:
+\begin{equation}
+  \label{eq:likelihood}
+  p(V) \equiv \prod_{m=1}^{M} p(\mathbf{v}_m).
+\end{equation}
+The log-likelihood function is given by:
+\begin{checkpointbox}[Log-likelihood function]
+\begin{equation}
+  \label{eq:log_likelihood}
+  \mathcal{L} \equiv \log p(V) = \sum_{m=1}^{M} \log p(\mathbf{v}_m).
+\end{equation}
 \end{checkpointbox}
+
 
 %----------- 주의 박스 예시 -----------------------------------
 \begin{cautionbox}[주의]
@@ -356,9 +404,6 @@ Similarly, the first equality in Eq. \eqref{eq:visible_cond_prob} can be rewritt
   위 방향을 양(+)으로 정했다면 중력가속도는 $g = -9.8\,\mathrm{m/s^2}$입니다.
 \end{cautionbox}
 
-%---------------------------------------------------------------
-\subsection{TikZ 그림 예시}
-%---------------------------------------------------------------
 
 
 %---------------------------------------------------------------
@@ -423,3 +468,8 @@ Similarly, the first equality in Eq. \eqref{eq:visible_cond_prob} can be rewritt
       \approx 5.1\,\mathrm{m}.
   \]
 \end{samplebox}
+
+%----------- 확인 문제 박스 예시 ------------------------------
+\begin{checkpointbox}[확인 문제 1-1]
+  위 예제에서 수평 도달 거리를 구하시오.
+\end{checkpointbox}
