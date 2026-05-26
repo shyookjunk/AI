@@ -542,12 +542,12 @@ in the derivation of the first term in the last line of Eq. \eqref{eq:gradient_b
 \begin{itemize}
   \item In RBM, the value of each node changes stochastically.
   \item Use Markov Chain Monte Carlo (MCMC) methods, such as Gibbs sampling,
-    to approximate the model expectation $\left<\cdots\right>_{\text{model}}$.
+    to approximate the probability $\sum_{\mathbf{v}} p(\mathbf{v}) p(h_j=1|\mathbf{v})$.
 \end{itemize}
 %===============================================================
 \end{document}
 %===============================================================
-
+ 
 %----------- 예제 박스 예시 -----------------------------------
 \begin{samplebox}[예제 1-1: 포물선 운동]
   \textsf{문제.} 초속 $v_0 = 20\,\mathrm{m/s}$, 발사각 $\theta = 30°$로 발사된
