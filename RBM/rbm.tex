@@ -7,17 +7,12 @@
 
 %---------------------------------------------------------------
 % 한글 폰트 및 언어 설정
-% (시험지와 동일한 검증된 설정)
 %---------------------------------------------------------------
 \usepackage{fontspec}
 \usepackage[hangul]{kotex}
 
-% 한글 폰트 — OS별 기본 폰트 자동 선택
-% Windows: 맑은 고딕 (기본 내장)
-% Fedora:  은바탕/은돋움 (sudo dnf install korean-fonts)
 \usepackage{ifplatform}
 \ifwindows
-  %\setmainhangulfont{Malgun Gothic}
   \setmainhangulfont{Batang}
   \setsanshangulfont{Malgun Gothic}
 \else
@@ -26,54 +21,19 @@
 \fi
 
 % 영문 폰트 (TeX Live 내장)
-\setmainfont{Latin Modern Roman}
-\setsansfont{Latin Modern Sans}
-\setmonofont{Latin Modern Mono}
+\setmainfont{TeX Gyre Termes}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{TeX Gyre Cursor}
 
 %---------------------------------------------------------------
-% 페이지 레이아웃 (A4)
+% 수학 패키지
 %---------------------------------------------------------------
-\usepackage[
-  a4paper,
-  top=25mm, bottom=25mm,
-  left=25mm, right=25mm,
-  headheight=14pt
-]{geometry}
+\usepackage{amsmath, amssymb}
 
 %---------------------------------------------------------------
-% 수식 패키지
-%---------------------------------------------------------------
-\usepackage{amsmath, amssymb, amsthm}
-\usepackage{mathtools}
-
-%---------------------------------------------------------------
-% TikZ / 그림 패키지
-%---------------------------------------------------------------
-\usepackage{tikz}
-\usepackage{pgfplots}
-\pgfplotsset{compat=1.18}
-
-% 자주 쓰는 TikZ 라이브러리
-\usetikzlibrary{
-  arrows.meta,
-  calc,
-  patterns,
-  decorations.pathmorphing,
-  decorations.markings,
-  angles,
-  quotes,
-  shapes.geometric,
-  positioning,
-  intersections
-}
-
-%---------------------------------------------------------------
-% 색상 / 박스 환경
+% 색상
 %---------------------------------------------------------------
 \usepackage{xcolor}
-\usepackage[most]{tcolorbox}
-
-% 색상 정의
 \definecolor{myblue}{RGB}{31, 78, 121}
 \definecolor{mygreen}{RGB}{0, 112, 54}
 \definecolor{mygray}{RGB}{89, 89, 89}
@@ -85,9 +45,12 @@
 \definecolor{lightorange}{RGB}{255, 235, 211}
 \definecolor{lightpurple}{RGB}{240, 230, 255}
 
-%----------- tcolorbox 환경 정의 ----------------------------
+%---------------------------------------------------------------
+% tcolorbox
+%---------------------------------------------------------------
+\usepackage[most]{tcolorbox}
 
-% 유도 / 설명 박스 (회색)
+% 유도 박스 (회색)
 \newtcolorbox{derivbox}[1][]{
   colback=lightgray, colframe=mygray,
   fonttitle=\bfseries\small,
@@ -96,7 +59,7 @@
   boxrule=0.6pt
 }
 
-% 예제 / 풀이 박스 (초록)
+% 예제 박스 (초록)
 \newtcolorbox{samplebox}[1][]{
   colback=lightgreen, colframe=mygreen,
   fonttitle=\bfseries\small,
@@ -155,20 +118,25 @@
 %---------------------------------------------------------------
 % 기타 유용한 패키지
 %---------------------------------------------------------------
-\usepackage{graphicx}           % 그림 삽입
-\usepackage{float}              % [H] 옵션
+\usepackage{graphicx}
+\usepackage{float}
 \usepackage{caption}
 \usepackage{subcaption}
-\usepackage{enumitem}           % 목록 커스터마이징
-\usepackage{hyperref}           % 하이퍼링크
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\usepackage{hyperref}
 \hypersetup{
   colorlinks=true,
   linkcolor=myblue,
   urlcolor=myblue,
   citecolor=mygreen
 }
-\usepackage{booktabs}           % 표 (toprule, midrule, bottomrule)
-\usepackage{siunitx}            % SI 단위
 
 %---------------------------------------------------------------
 % 수식 번호 명령어 (교재 번호 사용 시)
@@ -197,7 +165,7 @@
 \begin{itemize}
   \item Generative models are a class of machine learning models that can generate
         new data samples from the same distribution as the training data.
-  \item The most important thing is to model the probability distribution 
+  \item The most important thing is to model the probability distribution
         that best represents the training data.
   \item They can be used for various applications, such as:
         \begin{itemize}
@@ -211,9 +179,9 @@
 \section{Basic Mathematics}
 \begin{itemize}
   \item Let $\mathbf{x}$ and $\mathbf{y}$ be the input and output vectors, respectively.
-  \item If we know the joint probability distribution $P(\mathbf{x}, \mathbf{y})$, 
-      we can derive the conditional distribution $P(\mathbf{y}|\mathbf{x})$ 
-      using Bayes' theorem: 
+  \item If we know the joint probability distribution $P(\mathbf{x}, \mathbf{y})$,
+      we can derive the conditional distribution $P(\mathbf{y}|\mathbf{x})$
+      using Bayes' theorem:
 \end{itemize}
 \begin{derivbox}[Bayes' Theorem]
   \begin{equation}
@@ -227,13 +195,13 @@
 \begin{itemize}
   \item RBM is a type of probabilistic graph model that is used for unsupervised learning
         and feature extraction.
-  \item RBM is a type of generative model that consists of two layers: 
+  \item RBM is a type of generative model that consists of two layers:
         a visible layer $\mathbf{v}$ and a hidden layer $\mathbf{h}$.
-  \item The visible layer represents the input data, while the hidden layer 
+  \item The visible layer represents the input data, while the hidden layer
         captures the underlying features or patterns in the data.
-  \item The connections between the visible and hidden layers are undirected, 
-        meaning that they can influence each other (see Fig. \ref{fig:rbm}).
-  \item RBM resembles the Ising model in statistical physics, where the visible and hidden units 
+  \item The connections between the visible and hidden layers are undirected,
+        meaning that they can influence each other (see Fig.~\ref{fig:rbm}).
+  \item RBM resembles the Ising model in statistical physics, where the visible and hidden units
         correspond to spins that can be in one of two states (0 or 1).
 \end{itemize}
 %
@@ -274,7 +242,7 @@
 \subsection{Energy of RBM}
 \begin{itemize}
   \item The energy function of an RBM for a given configuration of
-  $\mathbf{v}=(v_1, v_2, \ldots, v_n)$ and 
+  $\mathbf{v}=(v_1, v_2, \ldots, v_n)$ and
   $\mathbf{h}=(h_1, h_2, \ldots, h_m)$ is defined as:
 \end{itemize}
 
@@ -286,7 +254,7 @@
 \section{Inference in RBM}
 
 Since the RBM is a kind of probabilistic graphical model, the inference process
-in RBM involves computing the joint probability of $\mathbf{v}$ and $\mathbf{h}$ 
+in RBM involves computing the joint probability of $\mathbf{v}$ and $\mathbf{h}$
 and/or the probabilities to have certain configuration $\mathbf{v}$, $p(\mathbf{v})$.
 
 Let's start with the joint probability distribution of $\mathbf{v}$ and $\mathbf{h}$.
@@ -306,13 +274,13 @@ The probability of a visible vector $\mathbf{v}$ can be obtained by marginalizin
 \begin{samplebox}[Margenization to get $p(\mathbf{v})$]
   \begin{equation}
     \label{eq:visible_prob}
-    p(\mathbf{v}) = \sum_{\mathbf{h}} p(\mathbf{v}, \mathbf{h}) 
+    p(\mathbf{v}) = \sum_{\mathbf{h}} p(\mathbf{v}, \mathbf{h})
     = \frac{1}{Z} \sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}
   \end{equation}
 \end{samplebox}
 
 Now, given a visible vector $\mathbf{v}$, we can compute the conditional probability of the hidden units:
-\begin{equation}  
+\begin{equation}
   \label{eq:hidden_cond_prob}
   p(\mathbf{h}|\mathbf{v}) = \frac{p(\mathbf{v}, \mathbf{h})}{p(\mathbf{v})}
           =\prod_{j=1}^{m}p(h_j|\mathbf{v}).
@@ -323,10 +291,10 @@ Similarly, we can compute the conditional probability of the visible units given
   p(\mathbf{v}|\mathbf{h}) = \frac{p(\mathbf{v}, \mathbf{h})}{p(\mathbf{h})}
           =\prod_{i=1}^{n}p(v_i|\mathbf{h}).
 \end{equation}
-In Eqs. \eqref{eq:hidden_cond_prob} and \eqref{eq:visible_cond_prob}, 
+In Eqs.~\eqref{eq:hidden_cond_prob} and \eqref{eq:visible_cond_prob},
 we used the fact that the hidden units are conditionally independent given the visible units,
 and vice versa.
-Note that the first equality in Eq. \eqref{eq:hidden_cond_prob} can be rewritten as:
+Note that the first equality in Eq.~\eqref{eq:hidden_cond_prob} can be rewritten as:
 \begin{align}
    p(\mathbf{h}|\mathbf{v}) &= \frac{p(\mathbf{v}, \mathbf{h})}{p(\mathbf{v})} \nonumber \\
    &= \dfrac{\dfrac{e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{Z}}{\dfrac{1}{Z} \sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}} \nonumber \\
@@ -336,10 +304,10 @@ Note that the first equality in Eq. \eqref{eq:hidden_cond_prob} can be rewritten
    &= \dfrac{\exp\left(\sum_i a_i v_i\right)\exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_j b_j h_j\right)}
    {\exp\left(\sum_i a_i v_i\right)\sum_{\mathbf{h}} \exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_j b_j h_j\right)} \nonumber \\
    &= \dfrac{\exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_j b_j h_j\right)}
-   {\sum_{\mathbf{h}} \exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_j b_j h_j\right)}. 
+   {\sum_{\mathbf{h}} \exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_j b_j h_j\right)}.
    \label{eq:hidden_cond_prob_rewrite}
 \end{align}
-Similarly, the first equality in Eq. \eqref{eq:visible_cond_prob} can be rewritten as:
+Similarly, the first equality in Eq.~\eqref{eq:visible_cond_prob} can be rewritten as:
 \begin{align}
   p(\mathbf{v}|\mathbf{h}) &= \frac{p(\mathbf{v}, \mathbf{h})}{p(\mathbf{h})} \nonumber \\
   &= \dfrac{\dfrac{e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{Z}}{\dfrac{1}{Z} \sum_{\mathbf{v}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}} \nonumber \\
@@ -349,15 +317,15 @@ Similarly, the first equality in Eq. \eqref{eq:visible_cond_prob} can be rewritt
   &= \dfrac{\exp\left(\sum_j b_j h_j\right)\exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_i a_i v_i\right)}
   {\exp\left(\sum_j b_j h_j\right)\sum_{\mathbf{v}} \exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_i a_i v_i\right)} \nonumber \\
   &= \dfrac{\exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_j b_j h_j\right)}
-  {\sum_{\mathbf{v}} \exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_j b_j h_j\right)}. 
+  {\sum_{\mathbf{v}} \exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_j b_j h_j\right)}.
   \label{eq:visible_cond_prob_rewrite}
 \end{align}
 
-Eqs. \eqref{eq:hidden_cond_prob_rewrite} and \eqref{eq:visible_cond_prob_rewrite} give us 
+Eqs.~\eqref{eq:hidden_cond_prob_rewrite} and \eqref{eq:visible_cond_prob_rewrite} give us
 the conditional probability that $h_j=1$ given $\mathbf{v}$
 and the conditional probability that $v_i=1$ given $\mathbf{h}$, respectively:
 \begin{align}
-  p(h_j=1|\mathbf{v}) &= \dfrac{\exp\left(\sum_i w_{ij} v_i + b_j\right) 
+  p(h_j=1|\mathbf{v}) &= \dfrac{\exp\left(\sum_i w_{ij} v_i + b_j\right)
   \sum_{\mathbf{h^\prime}} \exp\left(\sum_i\sum_{k\neq j} w_{ik} v_i h_k + \sum_{k\neq j} b_k h_k\right)}
   {\sum_{\mathbf{h}} \exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_j b_j h_j\right)} \nonumber \\
   &= \dfrac{\exp\left(\sum_i w_{ij} v_i + b_j\right) \sum_{\mathbf{h'}} \exp\left(\sum_i\sum_{k\neq j} w_{ik} v_i h_k + \sum_{k\neq j} b_k h_k\right)}
@@ -369,7 +337,7 @@ and the conditional probability that $v_i=1$ given $\mathbf{h}$, respectively:
 Here, $\sigma(x) = \frac{1}{1 + e^{-x}}$ is the sigmoid function and $\mathbf{h^\prime}$ denotes the configuration of hidden units except $h_j$.
 Similarly, we can derive the conditional probability that $v_i=1$ given $\mathbf{h}$:
 \begin{align}
-  p(v_i=1|\mathbf{h}) &= \dfrac{\exp\left(\sum_j w_{ij} h_j + a_i\right) 
+  p(v_i=1|\mathbf{h}) &= \dfrac{\exp\left(\sum_j w_{ij} h_j + a_i\right)
   \sum_{\mathbf{v^\prime}} \exp\left(\sum_{k\neq i}\sum_j w_{kj} v_k h_j + \sum_{k\neq i} a_k v_k\right)}
   {\sum_{\mathbf{v}} \exp\left(\sum_i\sum_j w_{ij} v_i h_j + \sum_i a_i v_i\right)} \nonumber \\
   &= \dfrac{\exp\left(\sum_j w_{ij} h_j + a_i\right) \sum_{\mathbf{v'}} \exp\left(\sum_{k\neq i}\sum_j w_{kj} v_k h_j + \sum_{k\neq i} a_k v_k\right)}
@@ -383,7 +351,7 @@ Here, $\mathbf{v^\prime}$ denotes the configuration of visible units except $v_i
 \subsection{Learning in RBM}
 
 Let training dataset $V$ be composed of $M$ samples,
-i.e., $V = \{\mathbf{v}_{1}, \mathbf{v}_{2}, \ldots, \mathbf{v}_{M}\}$. 
+i.e., $V = \{\mathbf{v}_{1}, \mathbf{v}_{2}, \ldots, \mathbf{v}_{M}\}$.
 Then likelihood function of the training dataset, $p(V)$, is defined as:
 \begin{equation}
   \label{eq:likelihood}
@@ -396,18 +364,17 @@ The \textcolor{red}{log-likelihood function} is given by:
   \mathcal{L} \equiv \log p(V) = \sum_{m=1}^{M} \log p(\mathbf{v}_m)
   \equiv \sum_{m=1}^{M} \mathcal{L}_{\mathbf{v}_m}.
 \end{equation}
-where $\mathcal{L}_{\mathbf{v}_m} = \log p(\mathbf{v}_m)$ is the log-likelihood of a single 
+where $\mathcal{L}_{\mathbf{v}_m} = \log p(\mathbf{v}_m)$ is the log-likelihood of a single
 training sample $\mathbf{v}_m$.
 \end{checkpointbox}
 
 \begin{itemize}
-  \item The learning process in RBM involves maximizing the log-likelihood 
+  \item The learning process in RBM involves maximizing the log-likelihood
     function $\mathcal{L}$ with respect to the model parameters $\theta = \{w_{ij}, a_i, b_j\}$.
-  \item This is typically done using gradient ascent, where we compute 
+  \item This is typically done using gradient ascent, where we compute
     the gradients of $\mathcal{L}$ with respect to the parameters and update them iteratively.
   \item The gradients can be computed using the following formulas:
-  \end{itemize}
-
+\end{itemize}
 
 \begin{cautionbox}[Gradient Ascend Update]
   \begin{align}
@@ -421,50 +388,50 @@ When we use a single training sample $\mathbf{v}$, the gradients can be computed
 \begin{align}
   \frac{\partial \mathcal{L}}{\partial w_{ij}} &= \dfrac{\partial \mathcal{L}_{\mathbf{v}}}{\partial w_{ij}} \nonumber \\
   &= \dfrac{\partial}{\partial w_{ij}} \ln p(\mathbf{v}) \nonumber \\
-  &= \dfrac{\partial}{\partial w_{ij}} \ln \left[\dfrac{\sum_{\mathbf{h}} 
+  &= \dfrac{\partial}{\partial w_{ij}} \ln \left[\dfrac{\sum_{\mathbf{h}}
         e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{Z}\right] \nonumber \\
-  &= \dfrac{\partial}{\partial w_{ij}} \ln \sum_{\mathbf{h}} 
-        e^{-\epsilon(\mathbf{v}, \mathbf{h})} 
+  &= \dfrac{\partial}{\partial w_{ij}} \ln \sum_{\mathbf{h}}
+        e^{-\epsilon(\mathbf{v}, \mathbf{h})}
         - \dfrac{\partial  \ln Z}{\partial w_{ij}} \nonumber \\
   &= \dfrac{1}{\sum_{\mathbf{h^\prime}} e^{-\epsilon(\mathbf{v}, \mathbf{h^\prime})}}
-        \sum_{\mathbf{h}} \dfrac{\partial e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{\partial w_{ij}} 
+        \sum_{\mathbf{h}} \dfrac{\partial e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{\partial w_{ij}}
         - \dfrac{1}{Z} \dfrac{\partial Z}{\partial w_{ij}} \nonumber \\
   &= \dfrac{1}{\sum_{\mathbf{h^\prime}} e^{-\epsilon(\mathbf{v}, \mathbf{h^\prime})}}
         \sum_{\mathbf{h}} \dfrac{\partial e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{\partial w_{ij}}
         +\dfrac{1}{Z} \sum_{\mathbf{v}, \mathbf{h}} e^{-\epsilon(\mathbf{v},\mathbf{h})}
         \dfrac{\partial \epsilon(\mathbf{v}, \mathbf{h})}{\partial w_{ij}} \nonumber \\
   &=-\dfrac{1}{\sum_{\mathbf{h^\prime}} e^{-\epsilon(\mathbf{v}, \mathbf{h^\prime})}}
-        \sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})} 
+        \sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}
         \dfrac{\partial \epsilon(\mathbf{v}, \mathbf{h})}{\partial w_{ij}}
-        + \sum_{\mathbf{v}, \mathbf{h}} \textcolor{magenta}{\dfrac{e^{-\epsilon(\mathbf{v},\mathbf{h})}}{Z}} 
+        + \sum_{\mathbf{v}, \mathbf{h}} \textcolor{magenta}{\dfrac{e^{-\epsilon(\mathbf{v},\mathbf{h})}}{Z}}
         \dfrac{\partial \epsilon(\mathbf{v}, \mathbf{h})}{\partial w_{ij}} \nonumber \\
-  &=-\sum_{\mathbf{h}} \textcolor{red}{\dfrac{e^{-\epsilon(\mathbf{v}, \mathbf{h})}}
-                      {\sum_{\mathbf{h^\prime}} e^{-\epsilon(\mathbf{v}, \mathbf{h^\prime})}}}  
+  &=-\sum_{\mathbf{h}} \textcolor{red}{\dfrac{e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{
+                      \sum_{\mathbf{h^\prime}} e^{-\epsilon(\mathbf{v}, \mathbf{h^\prime})}}}
         \dfrac{\partial \epsilon(\mathbf{v}, \mathbf{h})}{\partial w_{ij}}
-        + \sum_{\mathbf{v}, \mathbf{h}} \textcolor{magenta}{p(\mathbf{v},\mathbf{h}) }
+        + \sum_{\mathbf{v}, \mathbf{h}} \textcolor{magenta}{p(\mathbf{v},\mathbf{h})}
         \dfrac{\partial \epsilon(\mathbf{v}, \mathbf{h})}{\partial w_{ij}} \nonumber \\
   &=-\sum_{\mathbf{h}} \textcolor{red}{p(\mathbf{h}|\mathbf{v})}
         \dfrac{\partial \epsilon(\mathbf{v}, \mathbf{h})}{\partial w_{ij}}
-        + \sum_{\mathbf{v}, \mathbf{h}} p(\mathbf{v},\mathbf{h}) 
+        + \sum_{\mathbf{v}, \mathbf{h}} p(\mathbf{v},\mathbf{h})
         \dfrac{\partial \epsilon(\mathbf{v}, \mathbf{h})}{\partial w_{ij}} \nonumber \\
   &=-\sum_{\mathbf{h}} p(\mathbf{h}|\mathbf{v}) (-v_i h_j)
         + \sum_{\mathbf{v}, \mathbf{h}} p(\mathbf{v},\mathbf{h}) (-v_i h_j) \nonumber \\
   &=\sum_{\mathbf{h}} p(\mathbf{h}|\mathbf{v}) v_i h_j
         - \sum_{\mathbf{v}, \mathbf{h}} p(\mathbf{v},\mathbf{h}) v_i h_j \label{eq:gradient_w}
 \end{align}
-Here, we use the definition of the energy function $\epsilon(\mathbf{v}, \mathbf{h})$ in Eq. \eqref{eq:energy},
-and Eqs. \eqref{eq:joint_prob} and \eqref{eq:hidden_cond_prob} in the derivation.
-Since $h_i$ can take a value $0$ or $1$, the first term in the last line of Eq. \eqref{eq:gradient_w}
+Here, we use the definition of the energy function $\epsilon(\mathbf{v}, \mathbf{h})$ in Eq.~\eqref{eq:energy},
+and Eqs.~\eqref{eq:joint_prob} and \eqref{eq:hidden_cond_prob} in the derivation.
+Since $h_i$ can take a value $0$ or $1$, the first term in the last line of Eq.~\eqref{eq:gradient_w}
 is rewritten as:
 \begin{align}
-  \sum_{\mathbf{h}} p(\mathbf{h}|\mathbf{v}) v_i h_j & 
+  \sum_{\mathbf{h}} p(\mathbf{h}|\mathbf{v}) v_i h_j &
     = \dfrac{\sum_{\mathbf{h}} \exp\left(\sum_{i,j}w_{ij}v_i h_j+\sum_j b_j h_j\right) v_i h_j}
           {\sum_{\mathbf{h}} \exp\left(\sum_{i,j}w_{ij}v_i h_j+\sum_j b_j h_j\right)} \nonumber \\
-    &= \dfrac{\left\{\exp\left(\sum_i w_{ij} v_i+b_i\right) v_i +0\right\} 
+    &= \dfrac{\left\{\exp\left(\sum_i w_{ij} v_i+b_i\right) v_i +0\right\}
       \sum_{\mathbf{h}^\prime} \exp\left(\sum_{i,j}w_{ij}v_i h^\prime_j+\sum_j b_j h^\prime_j\right) v_i h^\prime_j}
-          {\left\{\exp\left(\sum_i w_{ij} v_i+b_i\right) + 1\right\} 
-                  \sum_{\mathbf{h}^\prime} \exp\left(\sum_{i,j}w_{ij}v_i h^\prime_j+\sum_j b_j h^\prime_j\right) 
-                          v_i h^\prime_j} \nonumber \\  
+          {\left\{\exp\left(\sum_i w_{ij} v_i+b_i\right) + 1\right\}
+                  \sum_{\mathbf{h}^\prime} \exp\left(\sum_{i,j}w_{ij}v_i h^\prime_j+\sum_j b_j h^\prime_j\right)
+                          v_i h^\prime_j} \nonumber \\
     &= \dfrac{1}{1 + \exp\left(-\sum_i w_{ij} v_i - b_j\right)} v_i \nonumber \\
     &= p(h_j=1|\mathbf{v}) v_i. \label{eq:gradient_w_first_term}
 \end{align}
@@ -481,19 +448,19 @@ Similarly, we can derive the gradients with respect to $a_i$ and $b_j$:
 \begin{align}
   \frac{\partial \mathcal{L}}{\partial a_i} &= \dfrac{\partial \mathcal{L}_{\mathbf{v}}}{\partial a_i} \nonumber \\
   &= \dfrac{\partial}{\partial a_i} \ln p(\mathbf{v}) \nonumber \\
-  &= \dfrac{\partial}{\partial a_i} \ln \left[\dfrac{\sum_{\mathbf{h}} 
+  &= \dfrac{\partial}{\partial a_i} \ln \left[\dfrac{\sum_{\mathbf{h}}
         e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{Z}\right] \nonumber \\
-  &= \dfrac{\partial}{\partial a_i} \ln \sum_{\mathbf{h}} 
-        e^{-\epsilon(\mathbf{v}, \mathbf{h})} 
+  &= \dfrac{\partial}{\partial a_i} \ln \sum_{\mathbf{h}}
+        e^{-\epsilon(\mathbf{v}, \mathbf{h})}
         - \dfrac{\partial  \ln Z}{\partial a_i} \nonumber \\
-  &= \dfrac{1}{\sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}} 
-      \sum_{\mathbf{h}} \dfrac{\partial e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{\partial a_i} 
+  &= \dfrac{1}{\sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}}
+      \sum_{\mathbf{h}} \dfrac{\partial e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{\partial a_i}
         - \dfrac{1}{Z} \dfrac{\partial Z}{\partial a_i} \nonumber \\
-  &= -\dfrac{1}{\sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}} 
-      \sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})} \dfrac{\partial \epsilon(\mathbf{v}, \mathbf{h})}{\partial a_i} 
-        + \dfrac{1}{Z} \sum_{\mathbf{v}, \mathbf{h}} e^{-\epsilon(\mathbf{v},\mathbf{h})} 
+  &= -\dfrac{1}{\sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}}
+      \sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})} \dfrac{\partial \epsilon(\mathbf{v}, \mathbf{h})}{\partial a_i}
+        + \dfrac{1}{Z} \sum_{\mathbf{v}, \mathbf{h}} e^{-\epsilon(\mathbf{v},\mathbf{h})}
         \dfrac{\partial \epsilon(\mathbf{v}, \mathbf{h})}{\partial a_i} \nonumber \\
-  &= \sum_{\mathbf{h}} \dfrac{e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{\sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}} v_i 
+  &= \sum_{\mathbf{h}} \dfrac{e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{\sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}} v_i
         - \sum_{\mathbf{v}, \mathbf{h}} \dfrac{e^{-\epsilon(\mathbf{v},\mathbf{h})}}{Z} v_i \nonumber \\
   &= \sum_{\mathbf{h}} p(\mathbf{h}|\mathbf{v}) v_i - \sum_{\mathbf{v}, \mathbf{h}} p(\mathbf{v},\mathbf{h}) v_i \nonumber \\
   &= v_i - \sum_{\mathbf{v}, \mathbf{h}} p(\mathbf{v},\mathbf{h}) v_i \nonumber \\
@@ -503,50 +470,105 @@ and
 \begin{align}
   \frac{\partial \mathcal{L}}{\partial b_j} &= \dfrac{\partial \mathcal{L}_{\mathbf{v}}}{\partial b_j} \nonumber \\
   &= \dfrac{\partial}{\partial b_j} \ln p(\mathbf{v}) \nonumber \\
-  &= \dfrac{\partial}{\partial b_j} \ln \left[\dfrac{\sum_{\mathbf{h}} 
+  &= \dfrac{\partial}{\partial b_j} \ln \left[\dfrac{\sum_{\mathbf{h}}
         e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{Z}\right] \nonumber \\
-  &= \dfrac{\partial}{\partial b_j} \ln \sum_{\mathbf{h}} 
-        e^{-\epsilon(\mathbf{v}, \mathbf{h})} 
+  &= \dfrac{\partial}{\partial b_j} \ln \sum_{\mathbf{h}}
+        e^{-\epsilon(\mathbf{v}, \mathbf{h})}
         - \dfrac{\partial  \ln Z}{\partial b_j} \nonumber \\
-  &= \dfrac{1}{\sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}} \sum_{\mathbf{h}} 
-        \dfrac{\partial e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{\partial b_j} 
+  &= \dfrac{1}{\sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}} \sum_{\mathbf{h}}
+        \dfrac{\partial e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{\partial b_j}
         - \dfrac{1}{Z} \dfrac{\partial Z}{\partial b_j} \nonumber \\
-  &= -\dfrac{1}{\sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}} \sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})} 
-      \dfrac{\partial \epsilon(\mathbf{v}, \mathbf{h})}{\partial b_j} 
-        + \dfrac{1}{Z} \sum_{\mathbf{v}, \mathbf{h}} e^{-\epsilon(\mathbf{v},\mathbf{h})} 
+  &= -\dfrac{1}{\sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}} \sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}
+      \dfrac{\partial \epsilon(\mathbf{v}, \mathbf{h})}{\partial b_j}
+        + \dfrac{1}{Z} \sum_{\mathbf{v}, \mathbf{h}} e^{-\epsilon(\mathbf{v},\mathbf{h})}
         \dfrac{\partial \epsilon(\mathbf{v}, \mathbf{h})}{\partial b_j} \nonumber \\
-  &= \sum_{\mathbf{h}} \dfrac{e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{\sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}} h_j 
+  &= \sum_{\mathbf{h}} \dfrac{e^{-\epsilon(\mathbf{v}, \mathbf{h})}}{\sum_{\mathbf{h}} e^{-\epsilon(\mathbf{v}, \mathbf{h})}} h_j
         - \sum_{\mathbf{v}, \mathbf{h}} \dfrac{e^{-\epsilon(\mathbf{v},\mathbf{h})}}{Z} h_j \nonumber \\
-  &= \textcolor{red}{\sum_{\mathbf{h}} p(\mathbf{h}|\mathbf{v}) h_j} - \sum_{\mathbf{v}, \mathbf{h}} 
+  &= \textcolor{red}{\sum_{\mathbf{h}} p(\mathbf{h}|\mathbf{v}) h_j} - \sum_{\mathbf{v}, \mathbf{h}}
       p(\mathbf{v},\mathbf{h}) h_j \nonumber \\
   &= \textcolor{red}{p(h_j=1|\mathbf{v})} - \sum_{\mathbf{v}, \mathbf{h}} p(\mathbf{v},\mathbf{h}) h_j \nonumber \\
   &=\left<h_j\right>_{\text{data}} - \left<h_j\right>_{\text{model}}.  \label{eq:gradient_b_final}
 \end{align}
-Here, we use again the fact that $h_j$ can take a value $0$ or $1$ 
-in the derivation of the first term in the last line of Eq. \eqref{eq:gradient_b_final}.
+Here, we use again the fact that $h_j$ can take a value $0$ or $1$
+in the derivation of the first term in the last line of Eq.~\eqref{eq:gradient_b_final}.
 
 \begin{itemize}
-  \item $\left<\cdots\right>_{\text{data}}$ denotes the expectation with respect to the data distribution. 
+  \item $\left<\cdots\right>_{\text{data}}$ denotes the expectation with respect to the data distribution.
   \item $\left<\cdots\right>_{\text{model}}$ denotes the expectation with respect to the model distribution.
-  \item $\left<v_i h_j\right>_{\text{data}}$ can be computed using the training data and the conditional 
+  \item $\left<v_i h_j\right>_{\text{data}}$ can be computed using the training data and the conditional
     probability $p(h_j=1|\mathbf{v})$.
   \item $\left<v_i h_j\right>_{\text{model}}$ should be obtained from $\sum_{\mathbf{v}} p(\mathbf{v},\mathbf{h})$
     or equivalently from the model's marginal distribution, $\sum_{\mathbf{v}} p(\mathbf{v}) p(h_j=1|\mathbf{v})$,
     which is intractable to compute exactly due to the partition function $Z$,
     \begin{itemize}
-      \item If the dimension of $\mathbf{v}$ is given by $n$, then we need to compute $2^n$ cases in the 
+      \item If the dimension of $\mathbf{v}$ is given by $n$, then we need to compute $2^n$ cases in the
       sum $\sum_{\mathbf{v}} p(h_j=1|\mathbf{v})$.
     \end{itemize}
 \end{itemize}
+
+\subsubsection{Markov Chain Monte Carlo (MCMC)}
 
 \begin{itemize}
   \item In RBM, the value of each node changes stochastically.
   \item Use Markov Chain Monte Carlo (MCMC) methods, such as Gibbs sampling,
     to approximate the probability $\sum_{\mathbf{v}} p(\mathbf{v}) p(h_j=1|\mathbf{v})$.
 \end{itemize}
+
+In Fig.~\ref{fig:rbm}, for given values of $h_2,h_3,v_1,v_2,v_3,v_4$,
+the probability of sampling $h_1$ is
+\begin{equation}
+  h_1\sim p(h_1|h_2,h_3,v_1,v_2,v_3,v_4).
+  \label{eq:gibbs_sampling}
+\end{equation}
+In RBM, there is no connection between the nodes in the same layer (hidden layer),
+so the value of $h_1$ is independent of $h_2$ and $h_3$ given the values of $v_1,v_2,v_3,v_4$.
+Therefore, we can rewrite Eq.~\eqref{eq:gibbs_sampling} as:
+\begin{equation}
+  h_1\sim p(h_1|v_1,v_2,v_3,v_4).
+\end{equation}
+Since $h_1$ can take a value $0$ or $1$, we can compute the probability of sampling $h_1=1$, i.e.,
+$p(h_1=1|v_1,v_2,v_3,v_4)$, using Eq.~\eqref{eq:hidden_cond_prob_final},
+and set $h_1=1$ with that probability and $h_1=0$ with the complementary probability, in practice.
+Therefore, we can sample the data of the hidden layer $\mathbf{h}=(h_1,h_2,h_3)$ as follows:
+\begin{align}
+  h_1 &\sim p(h_1|v_1,v_2,v_3,v_4) \nonumber \\
+  h_2 &\sim p(h_2|v_1,v_2,v_3,v_4) \nonumber \\
+  h_3 &\sim p(h_3|v_1,v_2,v_3,v_4) \nonumber  \\
+  \mathbf{h} &= (h_1,h_2,h_3). \label{eq:sample_hidden_layer}
+\end{align}
+
+Similarly, we can sample the data of the visible layer $\mathbf{v}=(v_1,v_2,v_3,v_4)$
+given the values of the hidden layer $\mathbf{h}=(h_1,h_2,h_3)$ as follows:
+\begin{align}
+  v_1 &\sim p(v_1|h_1,h_2,h_3) \nonumber \\
+  v_2 &\sim p(v_2|h_1,h_2,h_3) \nonumber \\
+  v_3 &\sim p(v_3|h_1,h_2,h_3) \nonumber  \\
+  v_4 &\sim p(v_4|h_1,h_2,h_3) \nonumber  \\
+  \mathbf{v} &= (v_1,v_2,v_3,v_4). \label{eq:sample_visible_layer}
+\end{align}
+
+\begin{itemize}
+  \item \textbf{Burn-in algorithm}: Start with a training sample $\mathbf{v}$,
+    sample $\mathbf{h}$ from $p(\mathbf{h}|\mathbf{v})$,
+    then sample $\mathbf{v'}$ from $p(\mathbf{v}|\mathbf{h})$,
+    and repeat this process until the probability distribution of the samples converges.
+  \item \textbf{Contrastive Divergence (CD):} Start with a training sample $\mathbf{v}$,
+    sample $\mathbf{h}$ from $p(\mathbf{h}|\mathbf{v})$,
+    then sample $\mathbf{v}^\prime$ from $p(\mathbf{v}^\prime|\mathbf{h})$,
+    and use $\mathbf{v}^\prime$ to compute the gradient of the
+    log-likelihood function, \textit{without burn-in procedure}.
+  \item \textbf{$k$-step CD ($CD_k$):} Start with a training sample $\mathbf{v}$,
+    sample $\mathbf{h}$ from $p(\mathbf{h}|\mathbf{v})$,
+    then sample $\mathbf{v}^\prime$ from $p(\mathbf{v}^\prime|\mathbf{h})$,
+    and repeat this process $k$ times,
+    and use the final $\mathbf{v}^\prime$ to compute
+    the gradient of the log-likelihood function.
+\end{itemize}
+
 %===============================================================
 \end{document}
 %===============================================================
+
  
 %----------- 예제 박스 예시 -----------------------------------
 \begin{samplebox}[예제 1-1: 포물선 운동]
