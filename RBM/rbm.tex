@@ -3,7 +3,8 @@
 %  컴파일: xelatex (VS Code LaTeX Workshop 기본 컴파일러)
 %  환경: Windows + TeX Live
 %===============================================================
-\documentclass[12pt, a4paper]{article}
+%\documentclass[12pt, a4paper]{article}
+\documentclass[10pt, a4paper]{article}
 
 %---------------------------------------------------------------
 % 한글 폰트 및 언어 설정
@@ -115,6 +116,16 @@
 \fancyfoot[C]{\small -- \thepage\ --}
 \renewcommand{\headrulewidth}{0.4pt}
 
+%-----------------------------------------------
+% 좌우 여백 조절
+%-----------------------------------------------
+\usepackage[
+  a4paper,
+  top=25mm, bottom=25mm,
+  left=20mm, right=20mm,  % 25mm → 20mm 로 줄이기
+  headheight=14pt
+]{geometry}
+
 %---------------------------------------------------------------
 % 기타 유용한 패키지
 %---------------------------------------------------------------
@@ -137,6 +148,38 @@
   urlcolor=myblue,
   citecolor=mygreen
 }
+
+\usetikzlibrary{arrows.meta, calc, patterns, angles, fit}
+%---------------------------------------------------------------
+%   알고리즘 box 스타일
+%---------------------------------------------------------------
+\usepackage{tcolorbox}
+\tcbuselibrary{skins, breakable}
+
+% 알고리즘 박스 색상
+\definecolor{algpink}{RGB}{230, 100, 120}
+\definecolor{algpinklight}{RGB}{255, 240, 242}
+
+% 알고리즘 박스 환경
+\newtcolorbox{algorithmbox}[2][]{
+  enhanced,
+  colback=white,
+  colframe=algpink,
+  coltitle=white,
+  fonttitle=\bfseries\small,
+  title={알고리즘 #2},
+  attach boxed title to top left={yshift=-2mm, xshift=4mm},
+  boxed title style={
+    colback=algpink,
+    colframe=algpink,
+    rounded corners
+  },
+  rounded corners,
+  boxrule=1pt,
+  top=6mm,
+  #1
+}
+\usepackage{enumitem}
 
 %---------------------------------------------------------------
 % 수식 번호 명령어 (교재 번호 사용 시)
@@ -506,7 +549,7 @@ in the derivation of the first term in the last line of Eq.~\eqref{eq:gradient_b
     \end{itemize}
 \end{itemize}
 
-\subsubsection{Markov Chain Monte Carlo (MCMC)}
+\subsection{Markov Chain Monte Carlo (MCMC)}
 
 \begin{itemize}
   \item In RBM, the value of each node changes stochastically.
@@ -562,8 +605,142 @@ given the values of the hidden layer $\mathbf{h}=(h_1,h_2,h_3)$ as follows:
     then sample $\mathbf{v}^\prime$ from $p(\mathbf{v}^\prime|\mathbf{h})$,
     and repeat this process $k$ times,
     and use the final $\mathbf{v}^\prime$ to compute
-    the gradient of the log-likelihood function.
+    the gradient of the log-likelihood function (see Fig.~\ref{fig:rbm_k_cd}).
 \end{itemize}
+\begin{figure}[H]
+  \begin{tikzpicture}[
+      % 원본 이미지와 유사한 스타일 정의
+      node style/.style={circle, draw, thick, minimum size=5.5mm, inner sep=0pt, font=\small\bfseries},
+      box style/.style={rectangle, draw=blue!70!black, thick, rounded corners=4pt, inner sep=5pt}
+  ]
+
+      % =================================================================
+      % 1. 블록 0 (맨 왼쪽 v 레이어 & 첫 h 레이어)
+      % =================================================================
+      % v0 레이어 (y = 0)
+      \node[node style] (v1_0) at (0,0) {$v_1$};
+      \node[node style] (v2_0) at (0.65,0) {$v_2$};
+      \node[node style] (v3_0) at (1.3,0) {$v_3$};
+      \node[node style] (v4_0) at (1.95,0) {$v_4$};
+      \node[box style, fit=(v1_0) (v4_0)] (box_v0) {};
+
+      % h0 레이어 (y축 간격을 2.0으로 벌림)
+      \node[node style] (h1_0) at (1.8, 2.0) {$h_1$};
+      \node[node style] (h2_0) at (2.45,2.0) {$h_2$};
+      \node[node style] (h3_0) at (3.1, 2.0) {$h_3$};
+      \node[box style, fit=(h1_0) (h3_0)] (box_h0) {};
+
+      % =================================================================
+      % 2. 블록 1 (두 번째 v 레이어 & 두 번째 h 레이어)
+      % =================================================================
+      % v1 레이어
+      \node[node style] (v1_1) at (2.9,0) {$v_1$};
+      \node[node style] (v2_1) at (3.55,0) {$v_2$};
+      \node[node style] (v3_1) at (4.2,0) {$v_3$};
+      \node[node style] (v4_1) at (4.85,0) {$v_4$};
+      \node[box style, fit=(v1_1) (v4_1)] (box_v1) {};
+
+      % h1 레이어
+      \node[node style] (h1_1) at (4.7, 2.0) {$h_1$};
+      \node[node style] (h2_1) at (5.35,2.0) {$h_2$};
+      \node[node style] (h3_1) at (6.0, 2.0) {$h_3$};
+      \node[box style, fit=(h1_1) (h3_1)] (box_h1) {};
+
+      % =================================================================
+      % 3. 블록 2 (세 번째 v 레이어 & 세 번째 h 레이어)
+      % =================================================================
+      % v2 레이어
+      \node[node style] (v1_2) at (5.8,0) {$v_1$};
+      \node[node style] (v2_2) at (6.45,0) {$v_2$};
+      \node[node style] (v3_2) at (7.1,0) {$v_3$};
+      \node[node style] (v4_2) at (7.75,0) {$v_4$};
+      \node[box style, fit=(v1_2) (v4_2)] (box_v2) {};
+
+      % h2 레이어
+      \node[node style] (h1_2) at (7.7, 2.0) {$h_1$};
+      \node[node style] (h2_2) at (8.35,2.0) {$h_2$};
+      \node[node style] (h3_2) at (9.0, 2.0) {$h_3$};
+      \node[box style, fit=(h1_2) (h3_2)] (box_h2) {};
+
+      % =================================================================
+      % 4. 중간 생략 기호 (...)
+      % =================================================================
+      \node[font=\Huge, fill=white, inner sep=2pt] at (10.2, 2.0) {$\dots$};
+      \node[font=\Huge, fill=white, inner sep=2pt] at (9.2, 0) {$\dots$};
+
+      % =================================================================
+      % 5. 마지막 블록 k (맨 오른쪽 v 레이어 & h 레이어)
+      % =================================================================
+      % vk 레이어
+      \node[node style] (v1_k) at (10.2,0) {$v_1$};
+      \node[node style] (v2_k) at (10.85,0) {$v_2$};
+      \node[node style] (v3_k) at (11.5,0) {$v_3$};
+      \node[node style] (v4_k) at (12.15,0) {$v_4$};
+      \node[box style, fit=(v1_k) (v4_k)] (box_vk) {};
+
+      % hk 레이어
+      \node[node style] (h1_k) at (12.1, 2.0) {$h_1$};
+      \node[node style] (h2_k) at (12.75,2.0) {$h_2$};
+      \node[node style] (h3_k) at (13.4, 2.0) {$h_3$};
+      \node[box style, fit=(h1_k) (h3_k)] (box_hk) {};
+
+
+      % =================================================================
+      % 6. 정밀한 지그재그 연결선 및 라벨 (간격 조정 반영)
+      % =================================================================
+      % 1) 첫 v0 중간 위쪽 -> h0의 h2 아래쪽
+      \path (box_v0.north) ++(0.3, 0) coordinate (v_point0);
+      \draw[thick] (v_point0) -- (h2_0.south) 
+          node[midway, left=3pt, font=\small, yshift=4pt] {$\langle v_i h_j \rangle^0$};
+
+      % 2) h0의 h2 아래쪽 -> v1 중간 위쪽
+      \path (box_v1.north) ++(-0.3, 0) coordinate (v_point1);
+      \draw[thick] (h2_0.south) -- (v_point1)
+          node[midway, right=3pt, font=\small, yshift=4pt] {$\langle v_i h_j \rangle^1$};
+
+      % 3) v1 중간 위쪽 -> h1의 h2 아래쪽
+      \draw[thick] (v_point1) -- (h2_1.south);
+
+      % 4) h1의 h2 아래쪽 -> v2 중간 위쪽
+      \path (box_v2.north) ++(-0.3, 0) coordinate (v_point2);
+      \draw[thick] (h2_1.south) -- (v_point2)
+          node[midway, right=3pt, font=\small, yshift=4pt] {$\langle v_i h_j \rangle^2$};
+
+      % 5) v2 중간 위쪽 -> h2의 h2 아래쪽
+      \draw[thick] (v_point2) -- (h2_2.south);
+
+      % 6) 마지막 vk 중간 위쪽 -> hk의 h2 아래쪽
+      \path (box_vk.north) ++(0.3, 0) coordinate (v_pointk);
+      \draw[thick] (v_pointk) -- (h2_k.south)
+          node[midway, left=3pt, font=\small, yshift=4pt] {$\langle v_i h_j \rangle^k$};
+
+  \end{tikzpicture}
+\caption{Schematic illustration of $k$-step Contrastive Divergence (CD) in RBM.}
+\label{fig:rbm_k_cd}
+\end{figure}
+
+\begin{algorithmbox}{5.1 \quad $k$-단계 대조분기 기반의 RBM 학습}
+  \textbf{Input}: Traning dataset $V = \{v_1, v_2, \ldots, v_M\}$, learning rate $\eta$ \\
+  \textbf{Output}: Weight vector $\boldsymbol{W}$, bias vectors $a$, $b$
+
+  \begin{enumerate}[leftmargin=1.5em, label=\arabic*.]
+    \item Initialize $\boldsymbol{W}$, $a$, $b$ with small random values.
+    \item \textbf{repeat}
+    \item \quad \textbf{for} ( each $v$ in $V$) \{
+    \item \quad\quad $v^0 \leftarrow v$
+    \item \quad\quad \textbf{for} ($t = 1$ to $k$) \{
+    \item \quad\quad\quad Compute $p(h_j^{k-1} = 1 | v^{k-1})$ using Eq. \eqref{eq:hidden_cond_prob_final}
+                          and sample $\mathbf{h}^{k-1}$.
+    \item \quad\quad\quad Compute $p(v_i^k = 1 | h^{k-1})$ using Eq. \eqref{eq:visible_cond_prob_final}
+                          and sample $\mathbf{v}^k$.
+    \item \quad\quad \}
+    \item \quad\quad Update the weights $\left\{w_{ij}\right\}$ using Eq. \eqref{eq:gradient_w_final}.
+    \item \quad\quad Update the biases $\left\{a_i\right\}$ using Eq. \eqref{eq:gradient_a_final}.
+    \item \quad\quad Update the biases $\left\{b_j\right\}$ using Eq. \eqref{eq:gradient_b_final}.
+    \item \quad \}
+    \item \textbf{until} (Termination condition is met, e.g., number of epochs or convergence)
+  \end{enumerate}
+\end{algorithmbox}
 
 %===============================================================
 \end{document}
