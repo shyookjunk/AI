@@ -534,6 +534,8 @@ Therefore, the gradient of the log-likelihood with respect to $w_{ij}$ is given 
     &= p(h_j=1|\mathbf{v}) v_i - \sum_{\mathbf{v}, \mathbf{h}} p(\mathbf{v},\mathbf{h}) v_i h_j \nonumber \\
     &= \left<v_i h_j\right>_{\text{data}} - \left<v_i h_j\right>_{\text{model}}. \label{eq:gradient_w_final}
 \end{align}
+Therefore, we obtain $\left<v_i h_j\right>_{\text{data}}$ from the training data by just calculating
+the sigmoid function in Eq.\eqref{eq:hidden_cond_prob_final}.
 
 Similarly, we can derive the gradients with respect to $a_i$ and $b_j$:
 \begin{align}
