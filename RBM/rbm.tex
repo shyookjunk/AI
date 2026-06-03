@@ -997,6 +997,56 @@ L=F(\mathbf{v})-F(\mathbf{v}^\prime).
 \label{eq:loss_Hinton}
 \end{equation}
 
+\section{Engineering Aspects of RBM}
+\begin{itemize}
+  \item In practice, calculating the first terms in Eqs.\eqref{eq:gradient_w_final},
+    \eqref{eq:gradient_a_final}, \eqref{eq:gradient_b_final}, and/or \eqref{eq:gradient_theta}
+    is relatively easy.
+  \item However, calculating the second terms in Eqs.\eqref{eq:gradient_w_final},
+    \eqref{eq:gradient_a_final}, \eqref{eq:gradient_b_final}, and/or 
+    \eqref{eq:gradient_theta} is intractable to compute exactly, 
+    since it includes summation over all possible $\mathbf{v}$ and $\mathbf{h}$.
+  \item To avoid the difficulty of computing the second terms in Eqs.\eqref{eq:gradient_w_final},
+    \eqref{eq:gradient_a_final}, \eqref{eq:gradient_b_final}, and/or \eqref{eq:gradient_theta},
+    we can use the Markov Chain Monte Carlo (MCMC) methods, such as Gibbs sampling,
+    to approximate the second terms.
+  \item Here is a tricky part: the MCMC methods, such as Gibbs sampling,
+    can be computationally expensive, especially when the number of visible 
+    and hidden units is large.
+  \item To address this issue, G.E. Hinton proposed the CD algorithm,
+    which is a practical method for training RBM, to avoid the difficulty
+    of computing the second terms in Eqs.\eqref{eq:gradient_w_final},
+    \eqref{eq:gradient_a_final}, \eqref{eq:gradient_b_final},  and/or \eqref{eq:gradient_theta}.
+  \item In the CD algorithm, the first terms in Eqs.\eqref{eq:gradient_w_final},
+    \eqref{eq:gradient_a_final}, \eqref{eq:gradient_b_final}, and/or \eqref{eq:gradient_theta}
+    are computed using the training data $\mathbf{v}$;
+    \begin{align}
+    \langle v_i h_j \rangle_{data} &= \sigma\left(\sum_i v_{i}w_{ij} + b_j\right) v_i, \nonumber \\
+    \langle v_i \rangle_{data} &= v_i, \nonumber \\
+    \langle h_j \rangle_{data} &= \sigma\left(\sum_i v_{i}w_{ij} + b_j\right),
+    \label{eq:hidden_cond_prob_final}
+    \end{align}
+    where $\sigma(x) = \dfrac{1}{1 + e^{-x}}$ is the sigmoid function. If we use a batch 
+    of training data, we can replace $v_i$ with the average of $v_i$ over the batch,
+    $\langle v_i \rangle_{batch}$, and replace $\sigma\left(\sum_i v_{i}w_{ij} + b_j\right)$ 
+    with the average of $\langle\sigma\left(\sum_i v_{i}w_{ij} + b_j\right)\rangle_{batch}$.
+  \item To approximate the second terms in Eqs.\eqref{eq:gradient_w_final},
+    \eqref{eq:gradient_a_final}, \eqref{eq:gradient_b_final}, and/or \eqref{eq:gradient_theta},
+    we use the following equations:
+    \begin{align}
+    \langle v_i h_j \rangle_{model} &\approx v_i^\prime p(h_j=1|\mathbf{v}^\prime)
+        = v_i^\prime \sigma\left(\sum_i v_{i}^\prime w_{ij} + b_j\right), \nonumber \\
+    \langle v_i \rangle_{model} &\approx v_i^\prime, \nonumber \\
+    \langle h_j \rangle_{model} &\approx p(h_j=1|\mathbf{v}^\prime)
+      = \sigma\left(\sum_i v_{i}^\prime w_{ij} + b_j\right),
+     \label{eq:visible_cond_prob_final}
+    \end{align}
+    where $\mathbf{v}^\prime$ is a sample obtained from the Gibbs sampling procedure.
+  \item The CD$_1$ algorithm rarely generate a handwriting image that is not recognizable 
+    as a digit, and CD$_k$ with $k>1$ can further improve the performance of the RBM.
+\end{itemize}
+
+
 \section{Appendix: Implementation of RBM in Python using PyTorch}
 \begin{lstlisting}[language=Python, basicstyle=\ttfamily\footnotesize, caption=RBM Implementation in PyTorch]
 #!/usr/bin/env python
