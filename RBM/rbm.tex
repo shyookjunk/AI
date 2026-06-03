@@ -269,6 +269,13 @@
 \section{Basic Mathematics}
 \begin{itemize}
   \item Let $\mathbf{x}$ and $\mathbf{y}$ be the input and output vectors, respectively.
+  \item Marginal distribution:
+    \begin{derivbox}[Marginalization]
+      \begin{equation}
+        \label{eq:marginal}
+        P(\mathbf{x}) = \sum_{\mathbf{y}} P(\mathbf{x}, \mathbf{y}).
+      \end{equation}
+    \end{derivbox}
   \item If we know the joint probability distribution $P(\mathbf{x}, \mathbf{y})$,
       we can derive the conditional distribution $P(\mathbf{y}|\mathbf{x})$
       using Bayes' theorem:
@@ -598,6 +605,31 @@ in the derivation of the first term in the last line of Eq.~\eqref{eq:gradient_b
       sum $\sum_{\mathbf{v}} p(h_j=1|\mathbf{v})$.
     \end{itemize}
 \end{itemize}
+
+\subsection{Kullback-Leibler (KL) Divergence}
+In general, the learning process in RBM can be viewed as minimizing the Kullback-Leibler (KL) divergence
+between the data distribution $p_{\text{data}}(\mathbf{v})$ and the model distribution $p_{\text{model}}(\mathbf{v})$:
+\begin{equation}
+  \label{eq:kl_divergence}
+  D_{\text{KL}}(p_{\text{data}} || p_{\text{model}}) = \sum_{\mathbf{v}} p_{\text{data}}(\mathbf{v}) \log \frac{p_{\text{data}}(\mathbf{v})}{p_{\text{model}}(\mathbf{v})}.
+\end{equation}
+Minimizing the KL divergence is equivalent to maximizing the log-likelihood function $\mathcal{L}$, since:
+\begin{align}
+  D_{\text{KL}}(p_{\text{data}} || p_{\text{model}}) &= \sum_{\mathbf{v}} p_{\text{data}}(\mathbf{v}) 
+              \log \frac{p_{\text{data}}(\mathbf{v})}{p_{\text{model}}(\mathbf{v})} \nonumber \\
+          &= \sum_{\mathbf{v}} p_{\text{data}}(\mathbf{v}) \log p_{\text{data}}(\mathbf{v}) - 
+              \sum_{\mathbf{v}} p_{\text{data}}(\mathbf{v}) \log p_{\text{model}}(\mathbf{v}) \nonumber \\
+          &= -H(p_{\text{data}}) - \sum_{\mathbf{v}} p_{\text{data}}(\mathbf{v}) 
+          \log p_{\text{model}}(\mathbf{v}) \nonumber \\
+          &= -H(p_{\text{data}}) - \mathcal{L},
+\end{align}
+where $H(p_{\text{data}})$ is the entropy of the data distribution,
+which is constant with respect to the model parameters. 
+Therefore, minimizing $D_{\text{KL}}(p_{\text{data}} || p_{\text{model}})$ is equivalent 
+to maximizing $\mathcal{L}$. This perspective helps us understand that the learning 
+process in RBM is essentially about making the model distribution as close as possible 
+to the data distribution by adjusting the model parameters to minimize the KL divergence.
+
 
 \subsection{Markov Chain Monte Carlo (MCMC)}
 
@@ -956,7 +988,7 @@ In the proposed CD algorithm, Hinton showed that even using a single step of Gib
 (i.e., $CD_1$) can yield good results in practice,
 and using more steps (i.e., $CD_k$ with $k>1$) can further 
 improve the performance of the RBM.
-In his scheme, the {\it loss} function $L$is defined as the difference
+In his scheme, the {\it loss} function $L$ is defined as the difference
 between the free energy of the training data $\mathbf{v}$
 and the free energy of the sample $\mathbf{v}^\prime$ obtained
 from the Gibbs sampling procedure, i.e.,
